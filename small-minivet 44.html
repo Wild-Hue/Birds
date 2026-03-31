@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Small Minivet — Wild-Hue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0e1420; --card: #141c2b; --surface: #1e2a3d;
+      --cyan: #00e5cc; --text: #e8edf5; --muted: #8a9ab8;
+      --border: rgba(255,255,255,0.07); --max-w: 860px;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; }
+    .page-shell { max-width: var(--max-w); margin: 0 auto; border: 1px solid var(--border); min-height: 100vh; }
+    nav { padding: 0 24px; height: 54px; display: flex; align-items: center; background: rgba(14,20,32,0.96); border-bottom: 1px solid var(--border); }
+    .nav-brand { font-family: 'Bebas Neue'; font-size: 1.45rem; color: var(--bg); background: var(--cyan); padding: 4px 11px 2px; border-radius: 3px; text-decoration: none; }
+    .bird-header { padding: 30px 24px; background: var(--card); }
+    .bird-name { font-family: 'Playfair Display'; font-size: 2.5rem; }
+
+    .gallery-grid { display: grid; grid-template-columns: 1fr; gap: 5px; padding: 5px; }
+    .photo-block { background: var(--surface); cursor: pointer; border-radius: 4px; overflow: hidden; position: relative; }
+    .photo-block img { width: 100%; display: block; aspect-ratio: 3/2; object-fit: cover; }
+
+    /* --- LIGHTBOX --- */
+    #lightbox {
+      display: none; position: fixed; inset: 0; z-index: 10000;
+      background: rgba(0,0,0,0.95); backdrop-filter: blur(12px);
+      touch-action: none; overflow: hidden;
+    }
+    #lightbox.open { display: flex; align-items: center; justify-content: center; }
+
+    .lb-img {
+      max-width: 95%; max-height: 85vh;
+      object-fit: contain;
+      will-change: transform;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .lb-close {
+      position: absolute; top: 20px; right: 20px;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2);
+      color: white; font-size: 24px; cursor: pointer; z-index: 10001;
+      display: flex; align-items: center; justify-content: center;
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-shell">
+  <nav><a href="#" class="nav-brand">WILD-HUE</a></nav>
+  <header class="bird-header">
+    <h1 class="bird-name">Small Minivet</h1>
+  </header>
+
+  <div class="gallery-grid">
+    <div class="photo-block" onclick="openLB(0)">
+      <img src="https://media.imagepond.net/media/images/Short-billed_Minivet_1_ckqTJlXV.png">
+    </div>
+    <div class="photo-block" onclick="openLB(1)">
+      <img src="https://media.imagepond.net/media/images/Short-billed_Minivet_2_pYYkLure.png">
+    </div>
+  </div>
+</div>
+
+<div id="lightbox" onclick="handleOutsideClick(event)">
+  <button class="lb-close" onclick="closeLB()">✕</button>
+  <img id="lb-img" class="lb-img" src="" alt="">
+</div>
+
+<script>
+const IMAGES = [
+  'https://media.imagepond.net/media/images/Short-billed_Minivet_1_ckqTJlXV.png',
+  'https://media.imagepond.net/media/images/Short-billed_Minivet_2_pYYkLure.png'
+];
+
+let cur = 0;
+let scale = 1, panX = 0, panY = 0;
+let startX = 0, startY = 0, lastDist = 0;
+let isDragging = false;
+
+const lb = document.getElementById('lightbox');
+const lbImg = document.getElementById('lb-img');
+
+function openLB(i) {
+  cur = i;
+  lbImg.src = IMAGES[cur];
+  resetZoom();
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLB() {
+  lb.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleOutsideClick(e) {
+  if (e.target.id === 'lightbox') closeLB();
+}
+
+function applyTransform() {
+  lbImg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+}
+
+function resetZoom() {
+  scale = 1; panX = 0; panY = 0;
+  lbImg.style.transition = 'transform 0.3s cubic-bezier(0.2, 0, 0.2, 1)';
+  applyTransform();
+  setTimeout(() => { lbImg.style.transition = ''; }, 300);
+}
+
+// --- TOUCH LOGIC ---
+lb.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  } else if (e.touches.length === 1) {
+    isDragging = true;
+    startX = e.touches[0].clientX - panX;
+    startY = e.touches[0].clientY - panY;
+  }
+}, {passive: false});
+
+lb.addEventListener('touchmove', e => {
+  e.preventDefault();
+
+  if (e.touches.length === 2) {
+    // Pinch Zoom
+    let dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    scale = Math.min(5, Math.max(1, scale * (dist / lastDist)));
+    lastDist = dist;
+  } else if (e.touches.length === 1 && isDragging) {
+    // Pan (ඕනෑම පැත්තකට ඇදගෙන යාම)
+    panX = e.touches[0].clientX - startX;
+    panY = e.touches[0].clientY - startY;
+
+    // Swipe down to close (පල්ලෙහාට ඇද්දොත් වැහෙනවා)
+    if (scale === 1 && panY > 150) {
+      isDragging = false;
+      closeLB();
+    }
+  }
+  applyTransform();
+}, {passive: false});
+
+lb.addEventListener('touchend', () => {
+  isDragging = false;
+  // සූම් කරලා නැති වෙලාවක පින්තූරය අතෑරියම මැදට එන්න ඕනේ නම්:
+  if (scale === 1) resetZoom();
+});
+
+// Double Tap Reset
+let lastTap = 0;
+lb.addEventListener('touchend', e => {
+  let now = Date.now();
+  if (now - lastTap < 300) resetZoom();
+  lastTap = now;
+});
+</script>
+
+</body>
+</html>
