@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Small Minivet — Wild-Hue</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -564,6 +564,8 @@ function openLB(i) {
   cur = i; renderLB(); resetZoom();
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
+  // force scroll to top so lightbox always covers correctly
+  window.scrollTo(0, 0);
 }
 function closeLB() {
   resetZoom();
