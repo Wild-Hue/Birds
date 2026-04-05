@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Oriental Dollarbird — Wild-Hue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #0e1420;
+      --card:     #141c2b;
+      --surface:  #1e2a3d;
+      --surface2: #253046;
+      --cyan:     #00e5cc;
+      --cyan-dim: #00b8a4;
+      --orange:   #e07c3a;
+      --orange-lt:#f0a060;
+      --text:     #e8edf5;
+      --muted:    #8a9ab8;
+      --border:   rgba(255,255,255,0.07);
+      --max-w:    860px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .page-shell {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      border-left:  1px solid var(--border);
+      border-right: 1px solid var(--border);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: -1;
+      background:
+        radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0,229,204,.05) 0%, transparent 70%),
+        var(--bg);
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 54px;
+      background: rgba(14,20,32,0.96);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.45rem; letter-spacing: .14em;
+      color: var(--bg); background: var(--cyan);
+      text-decoration: none;
+      padding: 4px 11px 2px; border-radius: 3px; line-height: 1;
+    }
+
+    /* BIRD HEADER */
+    .bird-header {
+      padding: 32px 24px 26px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+    .bird-order {
+      font-size: .6rem; font-weight: 500; letter-spacing: .16em;
+      text-transform: uppercase; color: var(--cyan);
+      margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+    }
+    .bird-order::before { content: ''; width: 20px; height: 1px; background: var(--cyan); display: inline-block; }
+    .bird-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.6rem; font-weight: 600; line-height: 1.05;
+      color: var(--text); margin-bottom: 4px;
+    }
+    .bird-sci {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: 1rem; color: var(--muted); margin-bottom: 20px;
+    }
+    .stat-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .stat-pill {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 30px; padding: 6px 14px;
+      font-size: .78rem; font-weight: 500; color: var(--muted);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .stat-pill b { color: var(--text); }
+    .dot   { width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); flex-shrink: 0; }
+    .dot-o { background: var(--orange); }
+    .bird-intro { font-size: .93rem; line-height: 1.8; color: var(--muted); }
+
+    /* SECTION LABEL */
+    .sec-label {
+      font-size: .6rem; font-weight: 500; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--cyan);
+      padding: 24px 24px 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sec-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* GALLERY */
+    .gallery-wrapper { padding-bottom: 8px; }
+    .gallery-heading {
+      display: flex; align-items: center; gap: 14px;
+      padding: 28px 24px 20px;
+    }
+    .gallery-heading-line { flex: 1; height: 1px; background: var(--border); }
+    .gallery-heading-text {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem; letter-spacing: .18em;
+      color: var(--text); line-height: 1; white-space: nowrap;
+    }
+
+    .photo-group { margin-bottom: 6px; }
+    .photo-group-title {
+      display: flex; align-items: baseline; gap: 10px;
+      padding: 12px 24px 10px;
+      border-top: 1px solid var(--border);
+    }
+    .pgt-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem; line-height: 1;
+      color: var(--cyan); letter-spacing: .08em; opacity: .5;
+    }
+    .pgt-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem; line-height: 1;
+      letter-spacing: .12em; color: var(--text);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px; padding: 0 3px 3px;
+    }
+    .gallery-grid.single { grid-template-columns: 1fr; }
+    .gallery-grid.single .photo-block img { aspect-ratio: 3/2; }
+    .photo-block:first-child { grid-column: 1/-1; }
+
+    .photo-block {
+      position: relative; overflow: hidden;
+      background: var(--surface); border-radius: 4px;
+    }
+    .photo-block img {
+      width: 100%; display: block;
+      aspect-ratio: 4/3; object-fit: cover; object-position: center top;
+      pointer-events: none; user-select: none; -webkit-user-drag: none;
+      transition: transform .45s cubic-bezier(.25,.46,.45,.94);
+    }
+    .photo-block:first-child img { aspect-ratio: 3/2; }
+    .photo-block:hover img { transform: scale(1.04); }
+
+    .img-shield { position: absolute; inset: 0; z-index: 2; }
+
+    .photo-badge {
+      position: absolute; bottom: 9px; left: 9px; z-index: 3;
+      font-size: .55rem; font-weight: 500; letter-spacing: .12em;
+      text-transform: uppercase; padding: 3px 9px;
+      border-radius: 20px; border: 1px solid;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      pointer-events: none;
+    }
+    .badge-original  { color: var(--cyan);      background: rgba(0,229,204,.12);  border-color: rgba(0,229,204,.35); }
+    .badge-coloring  { color: var(--orange-lt);  background: rgba(240,160,96,.12); border-color: rgba(240,160,96,.4); }
+
+    .photo-num {
+      position: absolute; bottom: 9px; right: 9px; z-index: 3;
+      font-size: .55rem; letter-spacing: .08em;
+      color: rgba(232,237,245,.4); pointer-events: none;
+    }
+
+    /* LIGHTBOX */
+    .lightbox {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(8,12,20,.97);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      flex-direction: column; align-items: center; justify-content: center;
+      padding: 16px; touch-action: none;
+    }
+    .lightbox.open { display: flex; }
+    .lb-close {
+      position: absolute; top: 12px; right: 16px;
+      background: none; border: none; color: var(--muted);
+      font-size: 2rem; cursor: pointer; line-height: 1; padding: 6px;
+      transition: color .2s; z-index: 10;
+    }
+    .lb-counter {
+      position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+      font-size: .65rem; letter-spacing: .1em; color: var(--muted); z-index: 10;
+    }
+    .lb-img-wrap {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; max-height: 72vh; overflow: hidden; touch-action: none;
+    }
+    .lb-img {
+      max-width: 100%; max-height: 72vh; object-fit: contain;
+      border-radius: 5px; user-select: none; -webkit-user-drag: none; display: block;
+      transform-origin: center center; will-change: transform;
+    }
+    .lb-meta { margin-top: 14px; text-align: center; }
+    .lb-caption { font-size: .72rem; letter-spacing: .09em; text-transform: uppercase; color: var(--text); display: block; margin-bottom: 5px; }
+    .lb-type-badge {
+      display: inline-block; font-size: .58rem; letter-spacing: .12em;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 20px; border: 1px solid;
+    }
+    .lb-nav { display: flex; gap: 12px; margin-top: 16px; }
+    .lb-btn {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--muted); width: 42px; height: 42px; border-radius: 50%;
+      font-size: 1.1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s, color .2s;
+    }
+    .lb-btn:hover { background: var(--surface2); color: var(--text); }
+
+    /* INFO CARDS */
+    .info-section { padding: 0 24px 28px; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+    .info-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 6px; padding: 16px 14px; transition: background .2s;
+    }
+    .info-card:hover { background: var(--surface); }
+    .info-card-icon { font-size: 1.4rem; display: block; margin-bottom: 9px; }
+    .info-card-label {
+      font-size: .65rem; font-weight: 500; letter-spacing: .13em;
+      text-transform: uppercase; color: var(--cyan-dim); margin-bottom: 5px;
+    }
+    .info-card-value { font-size: 1.05rem; color: var(--text); margin-bottom: 5px; }
+    .info-card-sub { font-size: .82rem; color: var(--muted); line-height: 1.65; }
+
+    /* DESCRIPTION */
+    .desc-section { padding: 0 24px 28px; }
+    .desc-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 22px 20px;
+    }
+    .desc-box h3 {
+      font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 600;
+      color: var(--text); margin-bottom: 14px;
+    }
+    .desc-box p { font-size: .88rem; line-height: 1.9; color: var(--muted); margin-bottom: 14px; }
+    .desc-box p:last-child { margin-bottom: 0; }
+    .desc-box strong { color: var(--text); font-weight: 500; }
+
+    /* TAXONOMY */
+    .tax-section { padding: 0 24px 28px; }
+    .tax-table {
+      width: 100%; border-collapse: collapse;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+    }
+    .tax-table tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+    .tax-table tr:last-child { border-bottom: none; }
+    .tax-table tr:hover { background: var(--surface); }
+    .tax-table td { padding: 11px 16px; font-size: .83rem; }
+    .tax-table td:first-child {
+      font-size: .6rem; font-weight: 500; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--cyan-dim); width: 130px;
+    }
+    .tax-table td:last-child { color: var(--text); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border); padding: 22px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .footer-brand {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: .12em;
+      color: var(--bg); background: var(--cyan);
+      padding: 3px 9px 2px; border-radius: 3px; line-height: 1;
+    }
+    footer p { font-size: .68rem; color: var(--muted); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .bird-order { animation: fadeUp .5s ease both .05s; }
+    .bird-name  { animation: fadeUp .5s ease both .12s; }
+    .bird-sci   { animation: fadeUp .5s ease both .18s; }
+    .stat-row   { animation: fadeUp .5s ease both .24s; }
+    .bird-intro { animation: fadeUp .5s ease both .3s; }
+
+    /* TABLET+ */
+    @media (min-width: 600px) {
+      .gallery-grid { grid-template-columns: 1fr 1fr 1fr; }
+      .photo-block:first-child { grid-column: 1/-1; }
+      .photo-block img { aspect-ratio: 16/10; }
+      .photo-block:first-child img { aspect-ratio: 21/9; }
+      .info-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-shell">
+
+  <!-- NAV -->
+  <nav>
+    <a href="index.html" class="nav-brand">WILD-HUE</a>
+  </nav>
+
+  <!-- BIRD HEADER -->
+  <header class="bird-header">
+    <div class="bird-order">Coraciiformes · Coraciidae</div>
+    <h1 class="bird-name">Oriental Dollarbird</h1>
+    <p class="bird-sci">Eurystomus orientalis</p>
+    <div class="stat-row">
+      <div class="stat-pill"><span class="dot"></span><b>Weight</b>&nbsp;100–130 g</div>
+      <div class="stat-pill"><span class="dot"></span><b>Length</b>&nbsp;27–30 cm</div>
+      <div class="stat-pill"><span class="dot"></span><b>Wingspan</b>&nbsp;~48 cm</div>
+      <div class="stat-pill"><span class="dot dot-o"></span>South Asia · SE Asia · Australia</div>
+    </div>
+    <p class="bird-intro">Named for the pair of pale blue–white circular wing patches that flash like <em>silver coins</em> in flight, the Oriental Dollarbird is a stocky, broad-winged roller of open forest and tall dead perches. In Sri Lanka it is a spectacular seasonal visitor, launching into dramatic aerial pursuits for insects at dusk with its vivid red bill blazing against the darkening sky.</p>
+  </header>
+
+  <!-- GALLERY -->
+  <div class="gallery-wrapper">
+
+    <div class="gallery-heading">
+      <span class="gallery-heading-line"></span>
+      <span class="gallery-heading-text">Photographs</span>
+      <span class="gallery-heading-line"></span>
+    </div>
+
+    <!-- PHOTO GROUP 1 : ORIGINAL PHOTO -->
+    <div class="photo-group">
+      <div class="photo-group-title">
+        <span class="pgt-num"></span>
+        <span class="pgt-label">Original Photo</span>
+      </div>
+      <div class="gallery-grid single">
+        <div class="photo-block">
+          <div class="img-shield" oncontextmenu="return false" ondragstart="return false"></div>
+          <img src="https://media.imagepond.net/media/images/Oriental_Dollarbird_a15vHgcr.png"
+               alt="Oriental Dollarbird — original photograph"
+               oncontextmenu="return false" ondragstart="return false" draggable="false">
+          <span class="photo-num">01</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHOTO GROUP 2 : COLORING GUIDE -->
+    <div class="photo-group">
+      <div class="photo-group-title">
+        <span class="pgt-num"></span>
+        <span class="pgt-label">Coloring Guide</span>
+      </div>
+      <div class="gallery-grid single">
+        <div class="photo-block">
+          <div class="img-shield" oncontextmenu="return false" ondragstart="return false"></div>
+          <img src="https://media.imagepond.net/media/images/Oriental_Dollarbird_2_YftpRjXf.png"
+               alt="Oriental Dollarbird — coloring guide"
+               oncontextmenu="return false" ondragstart="return false" draggable="false">
+          <span class="photo-num">02</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LIGHTBOX (structure retained, not wired to images) -->
+  <div class="lightbox" id="lightbox">
+    <button class="lb-close" onclick="closeLB()">&#215;</button>
+    <span class="lb-counter" id="lb-counter"></span>
+    <div class="lb-img-wrap" id="lb-img-wrap">
+      <img class="lb-img" id="lb-img" src="" alt=""
+           oncontextmenu="return false" ondragstart="return false" draggable="false">
+    </div>
+    <div class="lb-meta">
+      <span class="lb-caption" id="lb-caption"></span>
+      <span class="lb-type-badge" id="lb-badge"></span>
+    </div>
+    <div class="lb-nav">
+      <button class="lb-btn" onclick="stepLB(-1)">&#8592;</button>
+      <button class="lb-btn" onclick="stepLB(1)">&#8594;</button>
+    </div>
+  </div>
+
+  <!-- FIELD NOTES -->
+  <div class="sec-label">Field Notes</div>
+  <section class="info-section">
+    <div class="info-grid">
+      <div class="info-card">
+        <span class="info-card-icon">🌿</span>
+        <div class="info-card-label">Habitat</div>
+        <div class="info-card-value">Open Forest & Forest Edges</div>
+        <div class="info-card-sub">Forest clearings, forest edges, tall dead trees in open country, plantations and well-wooded gardens. Strongly associated with prominent exposed perches — tall snags, telephone poles and bare treetops — overlooking open airspace for hunting.</div>
+      </div>
+      <div class="info-card">
+        <span class="info-card-icon">📍</span>
+        <div class="info-card-label">Distribution</div>
+        <div class="info-card-value">South Asia to Australia</div>
+        <div class="info-card-sub">Breeds across South and Southeast Asia, China, Japan and through to Australia and the Solomon Islands. In Sri Lanka it is primarily a <strong>breeding migrant</strong> arriving March–April and departing September–October; some individuals may overwinter.</div>
+      </div>
+      <div class="info-card">
+        <span class="info-card-icon">⚖️</span>
+        <div class="info-card-label">Weight & Size</div>
+        <div class="info-card-value">100–130 g · 27–30 cm</div>
+        <div class="info-card-sub">Stocky and broad-winged with a large, flat head and a short neck — giving a very front-heavy silhouette in flight. The broad, slightly rounded wings and short square tail are characteristic of the roller family.</div>
+      </div>
+      <div class="info-card">
+        <span class="info-card-icon">🍃</span>
+        <div class="info-card-label">Diet</div>
+        <div class="info-card-value">Aerial Insectivore</div>
+        <div class="info-card-sub">Large flying insects — beetles, cicadas, grasshoppers, dragonflies, moths and winged termites. Most active at dawn and dusk; hunts in fast, twisting aerial pursuits, returning to its perch to beat and swallow larger prey.</div>
+      </div>
+      <div class="info-card">
+        <span class="info-card-icon">🔊</span>
+        <div class="info-card-label">Voice</div>
+        <div class="info-card-value">Harsh <em>chak-chak-chak</em></div>
+        <div class="info-card-sub">A loud, raucous, crow-like <em>"chak chak chak"</em> or <em>"kak-kak-kak"</em>, delivered repeatedly from a perch or in flight. Noisy and conspicuous near the nest, especially during territorial disputes at dusk.</div>
+      </div>
+      <div class="info-card">
+        <span class="info-card-icon">🟢</span>
+        <div class="info-card-label">Conservation</div>
+        <div class="info-card-value">Least Concern</div>
+        <div class="info-card-sub">IUCN Red List — Least Concern. Widespread and locally common across its enormous range from India to Australia. Tolerates modified landscapes well, though dependent on tall mature trees for nesting cavities.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DESCRIPTION -->
+  <div class="sec-label">About this Species</div>
+  <section class="desc-section">
+    <div class="desc-box">
+      <h3>Appearance</h3>
+      <p>The <strong>Oriental Dollarbird</strong> (<em>Eurystomus orientalis</em>) is a thickset, broad-winged roller immediately recognisable by the pair of large, pale blue-white circular patches on the outer primaries — visible as two gleaming <strong>"dollar coin"</strong> discs when the bird banks in flight, and the origin of its evocative common name. In perched birds these wing patches are concealed, and the overall impression is of a dark, rather uniform bird. The plumage is a deep <strong>blue-green to turquoise</strong> on the head, breast and underparts, with the mantle and back a dull brownish-black that contrasts with the brighter turquoise of the rump and tail. The throat is a distinctive <strong>cobalt-blue</strong>, often appearing almost luminous in good light. The short, broad bill is bright <strong>coral-red to vermillion</strong> with a blackish tip — one of the most striking features of the bird at close range. The legs are short and red.</p>
+      <p>Both sexes are virtually identical in plumage, making field sexing essentially impossible without behavioural cues. Immature birds are noticeably duller than adults — the blues are replaced by brownish-green tones, and the bill is much darker, becoming redder as the bird approaches adulthood. In flight the <strong>broad, somewhat paddle-shaped wings</strong> and short square tail give a distinctive silhouette — heavier and blunter than a falcon, with strong, direct wingbeats punctuated by brief glides.</p>
+
+      <h3 style="margin-top:18px;">Behaviour & Feeding</h3>
+      <p>The Oriental Dollarbird is a <strong>sit-and-wait aerial predator</strong> that hunts almost entirely on the wing. It selects a commanding exposed perch — a bare dead branch, a tall snag or a telephone wire with an unobstructed view of open airspace — and waits patiently, scanning for large flying insects. When prey is detected it launches into a fast, powerful pursuit, twisting and rolling through the air with surprising agility for a stocky bird, snapping prey in its wide, flat-based bill before returning to the same perch to swallow it. Hunting activity peaks sharply at <strong>dawn and dusk</strong>, when cicadas and large beetles take flight in greatest numbers, and on evenings following afternoon storms when termite alates emerge in swarms.</p>
+      <p>In Sri Lanka the Dollarbird is a conspicuous bird of the lowlands and lower hills, commonly encountered perched on exposed dead branches along forest roads, paddy field margins and the edges of village gardens in both the wet and dry zones. Its loud, raucous calls from a prominent treetop perch are often the first indication of its presence. Pairs tend to remain faithful to the same nesting territory year after year, returning to identical trees each season.</p>
+
+      <h3 style="margin-top:18px;">Breeding</h3>
+      <p>In Sri Lanka, breeding occurs between <strong>March and July</strong>, coinciding with the species' arrival from its wintering grounds. The nest is an <strong>unlined natural cavity in a tall tree</strong> — a hollow branch, a woodpecker hole or a rotted trunk — typically placed high above the ground with a clear flight path to the entrance. No nesting material is added; the eggs are laid directly on the bare wood of the cavity floor. The female lays <strong>three to four rounded, glossy white eggs</strong>. Both parents share incubation, which lasts approximately 18–20 days, and both feed the chicks. The adults are aggressive in defence of the nest cavity, often chasing away much larger birds — including crows and raptors — with loud calls and dive-bombing attacks. The chicks fledge after approximately 28–30 days.</p>
+    </div>
+  </section>
+
+  <!-- TAXONOMY -->
+  <div class="sec-label">Taxonomy</div>
+  <section class="tax-section">
+    <table class="tax-table">
+      <tr><td>Kingdom</td><td>Animalia</td></tr>
+      <tr><td>Phylum</td><td>Chordata</td></tr>
+      <tr><td>Class</td><td>Aves</td></tr>
+      <tr><td>Order</td><td>Coraciiformes</td></tr>
+      <tr><td>Family</td><td>Coraciidae</td></tr>
+      <tr><td>Genus</td><td><em>Eurystomus</em></td></tr>
+      <tr><td>Species</td><td><em>E. orientalis</em></td></tr>
+      <tr><td>Authority</td><td>Linnaeus, 1766</td></tr>
+      <tr><td>Subspecies</td><td>Up to 10 recognised incl. <em>orientalis</em> (India/Sri Lanka), <em>pacificus</em> (Australia), <em>abundus</em> (Borneo)</td></tr>
+      <tr><td>Common Names</td><td>Oriental Dollarbird · Dollar Roller · Broad-billed Roller</td></tr>
+      <tr><td>Related to</td><td>Indian Roller (<em>Coracias benghalensis</em>), European Roller (<em>Coracias garrulus</em>)</td></tr>
+    </table>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-brand">WILD-HUE</span>
+    <p>© 2025 Wild-Hue · All photographs protected · Reproduction prohibited</p>
+  </footer>
+
+</div><!-- /page-shell -->
+
+<script>
+const IMAGES = [
+  {
+    src:   'https://media.imagepond.net/media/images/Oriental_Dollarbird_a15vHgcr.png',
+    label: 'Oriental Dollarbird — Photograph 01',
+    type:  'original'
+  },
+  {
+    src:   'https://media.imagepond.net/media/images/Oriental_Dollarbird_2_YftpRjXf.png',
+    label: 'Oriental Dollarbird — Coloring Guide',
+    type:  'coloring'
+  },
+];
+
+const BADGE_META = {
+  original:  { cls: 'badge-original',  text: 'Original Photo' },
+  coloring:  { cls: 'badge-coloring',  text: 'Coloring Guide' },
+  habitat:   { cls: 'badge-habitat',   text: 'Habitat'        },
+  behaviour: { cls: 'badge-behaviour', text: 'Behaviour'      },
+  pair:      { cls: 'badge-pair',      text: 'Pair'           },
+};
+
+let cur = 0;
+
+function openLB(i) {
+  cur = i; renderLB(); resetZoom();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  window.scrollTo(0, 0);
+}
+function closeLB() {
+  resetZoom();
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function stepLB(d) {
+  resetZoom();
+  cur = (cur + d + IMAGES.length) % IMAGES.length;
+  renderLB();
+}
+function renderLB() {
+  const img  = IMAGES[cur];
+  const meta = BADGE_META[img.type] || BADGE_META.original;
+  document.getElementById('lb-img').src = img.src;
+  document.getElementById('lb-caption').textContent = img.label;
+  document.getElementById('lb-counter').textContent = (cur + 1) + ' / ' + IMAGES.length;
+  const b = document.getElementById('lb-badge');
+  b.textContent = meta.text;
+  b.className   = 'lb-type-badge ' + meta.cls;
+}
+
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape')     { resetZoom(); closeLB(); }
+  if (e.key === 'ArrowRight') { resetZoom(); stepLB(1); }
+  if (e.key === 'ArrowLeft')  { resetZoom(); stepLB(-1); }
+});
+
+const lbEl  = document.getElementById('lightbox');
+const lbImg = document.getElementById('lb-img');
+
+let scale = 1, panX = 0, panY = 0, lastDist = 0;
+let swipeStartX = 0, swipeStartY = 0;
+let panOriginX = 0, panOriginY = 0, isPanning = false;
+
+function applyTransform() {
+  lbImg.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+}
+function resetZoom() {
+  scale = 1; panX = 0; panY = 0;
+  lbImg.style.transition = 'transform .2s ease';
+  applyTransform();
+  setTimeout(() => { lbImg.style.transition = ''; }, 220);
+}
+function clampPan() {
+  if (scale <= 1) { panX = 0; panY = 0; return; }
+  const rect = lbImg.getBoundingClientRect();
+  const maxX = Math.max(0, (rect.width  - lbEl.clientWidth)  / 2);
+  const maxY = Math.max(0, (rect.height - lbEl.clientHeight) / 2);
+  panX = Math.min(maxX, Math.max(-maxX, panX));
+  panY = Math.min(maxY, Math.max(-maxY, panY));
+}
+
+lbEl.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  } else if (e.touches.length === 1) {
+    swipeStartX = e.touches[0].clientX; swipeStartY = e.touches[0].clientY;
+    panOriginX = panX; panOriginY = panY; isPanning = scale > 1;
+  }
+}, { passive: true });
+
+lbEl.addEventListener('touchmove', e => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    scale = Math.min(5, Math.max(1, scale * (dist / lastDist)));
+    lastDist = dist; clampPan(); applyTransform();
+  } else if (e.touches.length === 1 && isPanning) {
+    e.preventDefault();
+    panX = panOriginX + (e.touches[0].clientX - swipeStartX);
+    panY = panOriginY + (e.touches[0].clientY - swipeStartY);
+    clampPan(); applyTransform();
+  }
+}, { passive: false });
+
+lbEl.addEventListener('touchend', e => {
+  if (e.changedTouches.length === 1 && !isPanning && scale <= 1) {
+    const dx = e.changedTouches[0].clientX - swipeStartX;
+    const dy = e.changedTouches[0].clientY - swipeStartY;
+    if (Math.abs(dx) > 50 && Math.abs(dy) < 60) stepLB(dx < 0 ? 1 : -1);
+  }
+  isPanning = false;
+});
+
+let lastTap = 0;
+lbEl.addEventListener('touchend', e => {
+  const now = Date.now();
+  if (now - lastTap < 300 && scale > 1) resetZoom();
+  lastTap = now;
+});
+
+document.addEventListener('contextmenu', e => { if (e.target.tagName === 'IMG') e.preventDefault(); }, true);
+document.addEventListener('dragstart',   e => { if (e.target.tagName === 'IMG') e.preventDefault(); }, true);
+</script>
+</body>
+</html>
