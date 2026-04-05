@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sri Lanka Blue-Magpie — Wild-Hue</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:       #0e1420;
+      --card:     #141c2b;
+      --surface:  #1e2a3d;
+      --surface2: #253046;
+      --cyan:     #00e5cc;
+      --cyan-dim: #00b8a4;
+      --orange:   #e07c3a;
+      --orange-lt:#f0a060;
+      --text:     #e8edf5;
+      --muted:    #8a9ab8;
+      --border:   rgba(255,255,255,0.07);
+      --max-w:    860px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-weight: 300;
+      min-height: 100vh; overflow-x: hidden;
+    }
+    .page-shell {
+      max-width: var(--max-w); margin: 0 auto;
+      border-left: 1px solid var(--border); border-right: 1px solid var(--border);
+      min-height: 100vh; position: relative;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: -1;
+      background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0,229,204,.05) 0%, transparent 70%), var(--bg);
+    }
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 54px;
+      background: rgba(14,20,32,0.96);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.45rem; letter-spacing: .14em;
+      color: var(--bg); background: var(--cyan);
+      text-decoration: none; padding: 4px 11px 2px; border-radius: 3px; line-height: 1;
+    }
+    .nav-back {
+      font-size: .68rem; font-weight: 500; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--orange);
+      text-decoration: none; display: flex; align-items: center; gap: 5px; transition: color .2s;
+    }
+    .nav-back:hover { color: var(--orange-lt); }
+    .nav-back svg { width: 13px; height: 13px; }
+    .bird-header {
+      padding: 32px 24px 26px; background: var(--card); border-bottom: 1px solid var(--border);
+    }
+    .bird-order {
+      font-size: .6rem; font-weight: 500; letter-spacing: .16em;
+      text-transform: uppercase; color: var(--cyan);
+      margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+    }
+    .bird-order::before { content: ''; width: 20px; height: 1px; background: var(--cyan); display: inline-block; }
+    .bird-name {
+      font-family: 'Playfair Display', serif; font-size: 2.6rem; font-weight: 600;
+      line-height: 1.05; color: var(--text); margin-bottom: 4px;
+    }
+    .bird-sci {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: 1rem; color: var(--muted); margin-bottom: 20px;
+    }
+    .stat-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .stat-pill {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 30px; padding: 6px 14px;
+      font-size: .78rem; font-weight: 500; color: var(--muted);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .stat-pill b { color: var(--text); }
+    .dot   { width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); flex-shrink: 0; }
+    .dot-o { background: var(--orange); }
+    .bird-intro { font-size: .93rem; line-height: 1.8; color: var(--muted); }
+    .sec-label {
+      font-size: .6rem; font-weight: 500; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--cyan); padding: 24px 24px 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sec-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .gallery-wrapper { padding-bottom: 8px; }
+    .gallery-heading {
+      display: flex; align-items: center; gap: 14px; padding: 28px 24px 20px;
+    }
+    .gallery-heading-line { flex: 1; height: 1px; background: var(--border); }
+    .gallery-heading-text {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: .18em;
+      color: var(--text); line-height: 1; white-space: nowrap;
+    }
+    .photo-group { margin-bottom: 6px; }
+    .photo-group-title {
+      display: flex; align-items: baseline; gap: 10px;
+      padding: 12px 24px 10px; border-top: 1px solid var(--border);
+    }
+    .pgt-num {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; line-height: 1;
+      color: var(--cyan); letter-spacing: .08em; opacity: .5;
+    }
+    .pgt-label {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; line-height: 1;
+      letter-spacing: .12em; color: var(--text);
+    }
+    .gallery-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 0 3px 3px;
+    }
+    .gallery-grid.single { grid-template-columns: 1fr; }
+    .gallery-grid.single .photo-block img { aspect-ratio: 3/2; }
+    .photo-block:first-child { grid-column: 1/-1; }
+    .photo-block {
+      position: relative; overflow: hidden;
+      background: var(--surface); border-radius: 4px; cursor: pointer;
+    }
+    .photo-block img {
+      width: 100%; display: block; aspect-ratio: 4/3;
+      object-fit: cover; object-position: center top;
+      pointer-events: none; user-select: none; -webkit-user-drag: none;
+      transition: transform .45s cubic-bezier(.25,.46,.45,.94);
+    }
+    .photo-block:first-child img { aspect-ratio: 3/2; }
+    .photo-block:hover img { transform: scale(1.04); }
+    .img-shield { position: absolute; inset: 0; z-index: 2; }
+    .photo-badge {
+      position: absolute; bottom: 9px; left: 9px; z-index: 3;
+      font-size: .55rem; font-weight: 500; letter-spacing: .12em;
+      text-transform: uppercase; padding: 3px 9px;
+      border-radius: 20px; border: 1px solid;
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); pointer-events: none;
+    }
+    .badge-original  { color: var(--cyan);     background: rgba(0,229,204,.12);  border-color: rgba(0,229,204,.35); }
+    .badge-coloring  { color: var(--orange-lt); background: rgba(240,160,96,.12); border-color: rgba(240,160,96,.4); }
+    .badge-habitat   { color: #a8d8a8;           background: rgba(100,180,100,.1); border-color: rgba(100,180,100,.3); }
+    .badge-behaviour { color: #c9b8ff;           background: rgba(150,120,255,.1); border-color: rgba(150,120,255,.3); }
+    .badge-pair      { color: #ffcf80;           background: rgba(255,180,60,.1);  border-color: rgba(255,180,60,.3); }
+    .photo-num {
+      position: absolute; bottom: 9px; right: 9px; z-index: 3;
+      font-size: .55rem; letter-spacing: .08em; color: rgba(232,237,245,.4); pointer-events: none;
+    }
+    .photo-hint {
+      position: absolute; top: 9px; right: 9px; z-index: 3;
+      font-size: .55rem; color: rgba(232,237,245,.45); background: rgba(14,20,32,.45);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      padding: 3px 8px; border-radius: 20px; pointer-events: none;
+    }
+    .lightbox {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(8,12,20,.97);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      flex-direction: column; align-items: center; justify-content: center;
+      padding: 16px; touch-action: none;
+    }
+    .lightbox.open { display: flex; }
+    .lb-close {
+      position: absolute; top: 12px; right: 16px;
+      background: none; border: none; color: var(--muted);
+      font-size: 2rem; cursor: pointer; line-height: 1; padding: 6px;
+      transition: color .2s; z-index: 10;
+    }
+    .lb-counter {
+      position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+      font-size: .65rem; letter-spacing: .1em; color: var(--muted); z-index: 10;
+    }
+    .lb-img-wrap {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; max-height: 72vh; overflow: hidden; touch-action: none;
+    }
+    .lb-img {
+      max-width: 100%; max-height: 72vh; object-fit: contain; border-radius: 5px;
+      user-select: none; -webkit-user-drag: none; display: block;
+      transform-origin: center center; will-change: transform;
+    }
+    .lb-meta { margin-top: 14px; text-align: center; }
+    .lb-caption { font-size: .72rem; letter-spacing: .09em; text-transform: uppercase; color: var(--text); display: block; margin-bottom: 5px; }
+    .lb-type-badge {
+      display: inline-block; font-size: .58rem; letter-spacing: .12em;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 20px; border: 1px solid;
+    }
+    .lb-nav { display: flex; gap: 12px; margin-top: 16px; }
+    .lb-btn {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--muted); width: 42px; height: 42px; border-radius: 50%;
+      font-size: 1.1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s, color .2s;
+    }
+    .lb-btn:hover { background: var(--surface2); color: var(--text); }
+    .info-section { padding: 0 24px 28px; }
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+    .info-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 6px; padding: 16px 14px; transition: background .2s;
+    }
+    .info-card:hover { background: var(--surface); }
+    .info-card-icon { font-size: 1.4rem; display: block; margin-bottom: 9px; }
+    .info-card-label {
+      font-size: .65rem; font-weight: 500; letter-spacing: .13em;
+      text-transform: uppercase; color: var(--cyan-dim); margin-bottom: 5px;
+    }
+    .info-card-value { font-size: 1.05rem; color: var(--text); margin-bottom: 5px; }
+    .info-card-sub { font-size: .82rem; color: var(--muted); line-height: 1.65; }
+    .desc-section { padding: 0 24px 28px; }
+    .desc-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 22px 20px;
+    }
+    .desc-box h3 {
+      font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 600;
+      color: var(--text); margin-bottom: 14px;
+    }
+    .desc-box p { font-size: .88rem; line-height: 1.9; color: var(--muted); margin-bottom: 14px; }
+    .desc-box p:last-child { margin-bottom: 0; }
+    .desc-box strong { color: var(--text); font-weight: 500; }
+    .tax-section { padding: 0 24px 28px; }
+    .tax-table {
+      width: 100%; border-collapse: collapse;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+    }
+    .tax-table tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+    .tax-table tr:last-child { border-bottom: none; }
+    .tax-table tr:hover { background: var(--surface); }
+    .tax-table td { padding: 11px 16px; font-size: .83rem; }
+    .tax-table td:first-child {
+      font-size: .6rem; font-weight: 500; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--cyan-dim); width: 130px;
+    }
+    .tax-table td:last-child { color: var(--text); }
+    footer {
+      border-top: 1px solid var(--border); padding: 22px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .footer-brand {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: .12em;
+      color: var(--bg); background: var(--cyan); padding: 3px 9px 2px; border-radius: 3px; line-height: 1;
+    }
+    footer p { font-size: .68rem; color: var(--muted); }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .bird-order { animation: fadeUp .5s ease both .05s; }
+    .bird-name  { animation: fadeUp .5s ease both .12s; }
+    .bird-sci   { animation: fadeUp .5s ease both .18s; }
+    .stat-row   { animation: fadeUp .5s ease both .24s; }
+    .bird-intro { animation: fadeUp .5s ease both .3s; }
+    @media (min-width: 600px) {
+      .gallery-grid { grid-template-columns: 1fr 1fr 1fr; }
+      .photo-block:first-child { grid-column: 1/-1; }
+      .photo-block img { aspect-ratio: 16/10; }
+      .photo-block:first-child img { aspect-ratio: 21/9; }
+      .info-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+<div class="page-shell">
+
+  <nav>
+    <a href="index.html" class="nav-brand">WILD-HUE</a>
+    <a href="index.html" class="nav-back">
+      <svg viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 2L3 6.5L8 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      All Species
+    </a>
+  </nav>
+
+  <header class="bird-header">
+    <div class="bird-order">Passeriformes · Corvidae · Endemic</div>
+    <h1 class="bird-name">Sri Lanka Blue-Magpie</h1>
+    <p class="bird-sci">Urocissa ornata</p>
+    <div class="stat-row">
+      <div class="stat-pill"><span class="dot"></span><b>Weight</b>&nbsp;165–200 g</div>
+      <div class="stat-pill"><span class="dot"></span><b>Length</b>&nbsp;42–47 cm</div>
+      <div class="stat-pill"><span class="dot"></span><b>Wingspan</b>&nbsp;~52 cm</div>
+      <div class="stat-pill"><span class="dot dot-o"></span>Endemic · Sri Lanka</div>
+    </div>
+    <p class="bird-intro">One of Sri Lanka's most spectacular endemic birds — the Sri Lanka Blue-Magpie is a vibrant, long-tailed corvid of the island's montane rainforests. Its extraordinary combination of rich chestnut wings and body, brilliant cobalt-blue plumage and vivid red bill and legs make it one of the most visually striking birds in all of South Asia. Inquisitive, noisy and highly social, it moves through the forest understorey in boisterous family parties.</p>
+  </header>
+
+  <div class="gallery-wrapper">
+    <div class="gallery-heading">
+      <span class="gallery-heading-line"></span>
+      <span class="gallery-heading-text">Photographs</span>
+      <span class="gallery-heading-line"></span>
+    </div>
+
+    <div class="photo-group">
+      <div class="photo-group-title">
+        <span class="pgt-num"></span>
+        <span class="pgt-label">Original Photo</span>
+      </div>
+      <div class="gallery-grid single">
+        <div class="photo-block" onclick="openLB(0)">
+          <div class="img-shield" oncontextmenu="return false" ondragstart="return false"></div>
+          <img src="https://media.imagepond.net/media/images/Sri_Lanka_Blue-Magpie_1_21u7ziOZ.png"
+               alt="Sri Lanka Blue-Magpie — original photograph"
+               oncontextmenu="return false" ondragstart="return false" draggable="false">
+          <span class="photo-badge badge-original">Original Photo</span>
+          <span class="photo-hint">Tap to expand</span>
+          <span class="photo-num">01</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="photo-group">
+      <div class="photo-group-title">
+        <span class="pgt-num"></span>
+        <span class="pgt-label">Coloring Guide</span>
+      </div>
+      <div class="gallery-grid single">
+        <div class="photo-block" onclick="openLB(1)">
+          <div class="img-shield" oncontextmenu="return false" ondragstart="return false"></div>
+          <img src="https://media.imagepond.net/media/images/Sri_Lanka_Blue-Magpie_2_st0txJnZ.png"
+               alt="Sri Lanka Blue-Magpie — coloring guide"
+               oncontextmenu="return false" ondragstart="return false" draggable="false">
+          <span class="photo-badge badge-coloring">Coloring Guide</span>
+          <span class="photo-hint">Tap to expand</span>
+          <span class="photo-num">02</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lightbox" id="lightbox">
+    <button class="lb-close" onclick="closeLB()">&#215;</button>
+    <span class="lb-counter" id="lb-counter"></span>
+    <div class="lb-img-wrap" id="lb-img-wrap">
+      <img class="lb-img" id="lb-img" src="" alt=""
+           oncontextmenu="return false" ondragstart="return false" draggable="false">
+    </div>
+    <div class="lb-meta">
+      <span class="lb-caption" id="lb-caption"></span>
+      <span class="lb-type-badge" id="lb-badge"></span>
+    </div>
+    <div class="lb-nav">
+      <button class="lb-btn" onclick="stepLB(-1)">&#8592;</button>
+      <button class="lb-btn" onclick="stepLB(1)">&#8594;</button>
+    </div>
+  </div>
+
+  <div class="sec-label">Field Notes</div>
+  <section class="info-section">
+    <div class="info-grid">
+      <div class="info-card">
+        <span class="info-card-icon">🌿</span>
+        <div class="info-card-label">Habitat</div>
+        <div class="info-card-value">Montane Rainforest</div>
+        <div class="info-card-sub">Dense primary and mature secondary wet evergreen montane forest, typically above 500 m elevation. Strongly associated with the island's wet zone hill forests.</div>
+      </div>
+      <div class="info-card">
+        <span class="info-card-icon">📍</span>
+        <div class="info-card-label">Distribution</div>
+        <div class="info-card-value">Sri Lanka Only</div>
+        <div class="info-card-sub">Strictly endemic — confined to the wet zone hill forests of Sri Lanka, primarily in the central highlands and Knuckles range. Absent from the dry zone.</div>
+      </div>
+      <div class="info-card">
+        <span class="info-card-icon">⚖️</span>
+        <div class="info-card-label">Weight & Size</div>
+        <div class="info-card-value">165–200 g · 42–47 cm</div>
+        <div class="info-card-sub">A large, long-tailed corvid. The graduated tail accounts for more than half the bird's total length, trailing dramatically behind it in flight.</div>
+      </div>
+      <div class="info-card">
+        <span class="info-card-icon">🍄</span>
+        <div class="info-card-label">Diet</div>
+        <div class="info-card-value">Omnivore</div>
+        <div class="info-card-sub">Highly varied diet: insects, lizards, frogs, small snakes, eggs and nestlings, fruit and berries. Often raids the nests of other bird species.</div>
+      </div>
+      <div class="info-card">
+        <span class="info-card-icon">🔊</span>
+        <div class="info-card-label">Voice</div>
+        <div class="info-card-value">Loud, varied calls</div>
+        <div class="info-card-sub">A repertoire of raucous, scolding calls — loud <em>kaa-kaa</em> notes, harsh chattering and melodious whistles. Noisy and conspicuous when moving through the understorey in flocks.</div>
+      </div>
+      <div class="info-card">
+        <span class="info-card-icon">🔴</span>
+        <div class="info-card-label">Conservation</div>
+        <div class="info-card-value">Vulnerable</div>
+        <div class="info-card-sub">IUCN Vulnerable. Threatened by ongoing deforestation and degradation of the wet zone hill forests. Sensitive to forest disturbance; rarely persists in heavily modified habitats.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sec-label">About this Species</div>
+  <section class="desc-section">
+    <div class="desc-box">
+      <h3>Appearance</h3>
+      <p>The <strong>Sri Lanka Blue-Magpie</strong> (<em>Urocissa ornata</em>) is a large, brilliantly coloured corvid measuring 42–47 cm, with a long graduated tail adding dramatically to its presence. The head, neck and upper mantle are <strong>deep chestnut-rufous</strong>, contrasting sharply with the vivid <strong>cobalt-blue</strong> wings, tail and lower body. The tail is tipped white, and the long graduated feathers create an elegant trailing silhouette in flight. The bill, orbital ring and legs are all a striking <strong>bright red</strong> — giving the bird an almost theatrical colour palette that is immediately unmistakable.</p>
+      <p>The sexes are alike in plumage. Juveniles are duller overall — browner above, with a less vivid blue — and gradually acquire full adult colouration over their first year. The eye is pale yellowish-white in adults, adding to the bird's striking facial expression.</p>
+
+      <h3 style="margin-top:18px;">Behaviour & Social Life</h3>
+      <p>The Sri Lanka Blue-Magpie is a <strong>highly social and inquisitive bird</strong>, almost always found in noisy, active family parties of four to eight individuals that move together through the forest in a loose, straggling procession. The group communicates constantly with a variety of loud calls, and individuals frequently mob potential predators with raucous scolding.</p>
+      <p>Like all corvids, it is highly intelligent and opportunistic. It forages at all levels of the forest — from the ground litter to the mid-canopy — turning over leaves, probing bark and investigating crevices in search of prey. It is known to follow other foraging animals such as giant squirrels to steal food, and will readily plunder the nests of other birds for eggs and chicks.</p>
+
+      <h3 style="margin-top:18px;">Breeding</h3>
+      <p>Breeding occurs from <strong>February to May</strong>, coinciding with the pre-monsoon dry period in the hills. The nest is a large, untidy <strong>cup of twigs</strong>, lined with fine roots and leaves, placed in a tree fork in dense forest, often at a considerable height. The clutch is typically <strong>three to five pale greenish eggs</strong> spotted with brown. Cooperative breeding behaviour has been observed, with non-breeding group members helping to feed the nestlings — a trait shared with other corvid species.</p>
+    </div>
+  </section>
+
+  <div class="sec-label">Taxonomy</div>
+  <section class="tax-section">
+    <table class="tax-table">
+      <tr><td>Kingdom</td><td>Animalia</td></tr>
+      <tr><td>Phylum</td><td>Chordata</td></tr>
+      <tr><td>Class</td><td>Aves</td></tr>
+      <tr><td>Order</td><td>Passeriformes</td></tr>
+      <tr><td>Family</td><td>Corvidae</td></tr>
+      <tr><td>Genus</td><td><em>Urocissa</em></td></tr>
+      <tr><td>Species</td><td><em>U. ornata</em></td></tr>
+      <tr><td>Authority</td><td>Wagler, 1829</td></tr>
+      <tr><td>Subspecies</td><td>Monotypic (no recognised subspecies)</td></tr>
+      <tr><td>Related to</td><td>Red-billed Blue Magpie (<em>Urocissa erythroryncha</em>)</td></tr>
+    </table>
+  </section>
+
+  <footer>
+    <span class="footer-brand">WILD-HUE</span>
+    <p>© 2025 Wild-Hue · All photographs protected · Reproduction prohibited</p>
+  </footer>
+
+</div>
+
+<script>
+const IMAGES = [
+  { src: 'https://media.imagepond.net/media/images/Sri_Lanka_Blue-Magpie_1_21u7ziOZ.png', label: 'Sri Lanka Blue-Magpie — Photograph 01', type: 'original' },
+  { src: 'https://media.imagepond.net/media/images/Sri_Lanka_Blue-Magpie_2_st0txJnZ.png', label: 'Sri Lanka Blue-Magpie — Coloring Guide', type: 'coloring' },
+];
+const BADGE_META = {
+  original:  { cls: 'badge-original',  text: 'Original Photo' },
+  coloring:  { cls: 'badge-coloring',  text: 'Coloring Guide' },
+  habitat:   { cls: 'badge-habitat',   text: 'Habitat'        },
+  behaviour: { cls: 'badge-behaviour', text: 'Behaviour'      },
+  pair:      { cls: 'badge-pair',      text: 'Pair'           },
+};
+let cur = 0;
+function openLB(i) {
+  cur = i; renderLB(); resetZoom();
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden'; window.scrollTo(0, 0);
+}
+function closeLB() {
+  resetZoom();
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function stepLB(d) { resetZoom(); cur = (cur + d + IMAGES.length) % IMAGES.length; renderLB(); }
+function renderLB() {
+  const img = IMAGES[cur], meta = BADGE_META[img.type] || BADGE_META.original;
+  document.getElementById('lb-img').src = img.src;
+  document.getElementById('lb-caption').textContent = img.label;
+  document.getElementById('lb-counter').textContent = (cur + 1) + ' / ' + IMAGES.length;
+  const b = document.getElementById('lb-badge');
+  b.textContent = meta.text; b.className = 'lb-type-badge ' + meta.cls;
+}
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape') { resetZoom(); closeLB(); }
+  if (e.key === 'ArrowRight') { resetZoom(); stepLB(1); }
+  if (e.key === 'ArrowLeft')  { resetZoom(); stepLB(-1); }
+});
+const lbEl = document.getElementById('lightbox'), lbImg = document.getElementById('lb-img');
+let scale = 1, panX = 0, panY = 0, lastDist = 0;
+let swipeStartX = 0, swipeStartY = 0, panOriginX = 0, panOriginY = 0, isPanning = false;
+function applyTransform() { lbImg.style.transform = `translate(${panX}px,${panY}px) scale(${scale})`; }
+function resetZoom() {
+  scale = 1; panX = 0; panY = 0;
+  lbImg.style.transition = 'transform .2s ease'; applyTransform();
+  setTimeout(() => { lbImg.style.transition = ''; }, 220);
+}
+function clampPan() {
+  if (scale <= 1) { panX = 0; panY = 0; return; }
+  const rect = lbImg.getBoundingClientRect();
+  const maxX = Math.max(0, (rect.width  - lbEl.clientWidth)  / 2);
+  const maxY = Math.max(0, (rect.height - lbEl.clientHeight) / 2);
+  panX = Math.min(maxX, Math.max(-maxX, panX));
+  panY = Math.min(maxY, Math.max(-maxY, panY));
+}
+lbEl.addEventListener('touchstart', e => {
+  if (e.touches.length === 2) {
+    lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  } else {
+    swipeStartX = e.touches[0].clientX; swipeStartY = e.touches[0].clientY;
+    panOriginX = panX; panOriginY = panY; isPanning = scale > 1;
+  }
+}, { passive: true });
+lbEl.addEventListener('touchmove', e => {
+  if (e.touches.length === 2) {
+    e.preventDefault();
+    const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    scale = Math.min(5, Math.max(1, scale * (dist / lastDist))); lastDist = dist; clampPan(); applyTransform();
+  } else if (e.touches.length === 1 && isPanning) {
+    e.preventDefault();
+    panX = panOriginX + (e.touches[0].clientX - swipeStartX);
+    panY = panOriginY + (e.touches[0].clientY - swipeStartY);
+    clampPan(); applyTransform();
+  }
+}, { passive: false });
+lbEl.addEventListener('touchend', e => {
+  if (e.changedTouches.length === 1 && !isPanning && scale <= 1) {
+    const dx = e.changedTouches[0].clientX - swipeStartX;
+    const dy = e.changedTouches[0].clientY - swipeStartY;
+    if (Math.abs(dx) > 50 && Math.abs(dy) < 60) stepLB(dx < 0 ? 1 : -1);
+  }
+  isPanning = false;
+});
+let lastTap = 0;
+lbEl.addEventListener('touchend', e => {
+  const now = Date.now();
+  if (now - lastTap < 300 && scale > 1) resetZoom();
+  lastTap = now;
+});
+document.addEventListener('contextmenu', e => { if (e.target.tagName === 'IMG') e.preventDefault(); }, true);
+document.addEventListener('dragstart',   e => { if (e.target.tagName === 'IMG') e.preventDefault(); }, true);
+</script>
+</body>
+</html>
