@@ -3,35 +3,563 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wild-Hue</title>
+  <title>Wild-Hue — Sri Lanka Birds</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      height: 100%;
+    :root {
+      --bg:       #0e1420;
+      --card:     #141c2b;
+      --surface:  #1e2a3d;
+      --surface2: #253046;
+      --cyan:     #00e5cc;
+      --cyan-dim: #00b8a4;
+      --orange:   #e07c3a;
+      --orange-lt:#f0a060;
+      --text:     #e8edf5;
+      --muted:    #8a9ab8;
+      --border:   rgba(255,255,255,0.07);
+      --max-w:    860px;
     }
+
+    html { scroll-behavior: smooth; }
     body {
-      background: #0e1420;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: -1;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% -10%, rgba(0,229,204,.07) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 30% at 80% 80%, rgba(224,124,58,.04) 0%, transparent 60%),
+        var(--bg);
+    }
+
+    .page-shell {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      border-left:  1px solid var(--border);
+      border-right: 1px solid var(--border);
       min-height: 100vh;
     }
-    .logo {
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 54px;
+      background: rgba(14,20,32,0.96);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-brand {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 3.2rem;
-      letter-spacing: .18em;
-      color: #0e1420;
-      background: #00e5cc;
-      padding: 12px 28px 8px;
-      border-radius: 6px;
-      line-height: 1;
-      user-select: none;
+      font-size: 1.45rem; letter-spacing: .14em;
+      color: var(--bg); background: var(--cyan);
+      text-decoration: none;
+      padding: 4px 11px 2px; border-radius: 3px; line-height: 1;
+    }
+    .nav-count {
+      font-size: .68rem; font-weight: 500; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .nav-count span { color: var(--cyan); }
+
+    /* HERO */
+    .hero {
+      padding: 56px 24px 44px;
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+      opacity: 0.3;
+    }
+    .hero-eyebrow {
+      font-size: .6rem; font-weight: 500; letter-spacing: .2em;
+      text-transform: uppercase; color: var(--cyan);
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .hero-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--cyan); }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem; font-weight: 600; line-height: 1.05;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .hero-title em {
+      font-style: italic; color: var(--cyan);
+    }
+    .hero-sub {
+      font-size: .9rem; line-height: 1.75; color: var(--muted);
+      max-width: 560px; margin-top: 14px;
+    }
+
+    /* FILTER BAR */
+    .filter-bar {
+      padding: 18px 24px;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+    }
+    .filter-label {
+      font-size: .6rem; font-weight: 500; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--muted); margin-right: 4px;
+    }
+    .filter-btn {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 30px; padding: 5px 14px;
+      font-size: .72rem; font-weight: 500; color: var(--muted);
+      cursor: pointer; transition: all .2s; font-family: 'DM Sans', sans-serif;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: rgba(0,229,204,.12);
+      border-color: rgba(0,229,204,.4);
+      color: var(--cyan);
+    }
+
+    /* BIRD LIST */
+    .bird-list {
+      padding: 8px 0 40px;
+    }
+
+    .bird-item {
+      display: block;
+      text-decoration: none;
+      padding: 0 24px;
+      border-bottom: 1px solid var(--border);
+      transition: background .18s;
+      cursor: pointer;
+      position: relative;
+    }
+    .bird-item:hover {
+      background: rgba(255,255,255,0.025);
+    }
+    .bird-item:hover .bird-arrow {
+      opacity: 1; transform: translateX(0);
+    }
+    .bird-item:hover .bird-num {
+      color: var(--cyan);
+    }
+
+    .bird-item-inner {
+      display: flex; align-items: center;
+      padding: 20px 0; gap: 20px;
+    }
+
+    .bird-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem; letter-spacing: .08em;
+      color: rgba(138,154,184,0.35);
+      min-width: 32px;
+      transition: color .18s;
+      flex-shrink: 0;
+    }
+
+    .bird-info { flex: 1; min-width: 0; }
+
+    .bird-name-common {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem; font-weight: 600; line-height: 1.15;
+      color: var(--text); margin-bottom: 3px;
+    }
+    .bird-name-sci {
+      font-family: 'Playfair Display', serif;
+      font-style: italic; font-size: .78rem;
+      color: var(--muted);
+    }
+
+    .bird-meta {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-top: 8px;
+    }
+    .bird-tag {
+      font-size: .58rem; font-weight: 500; letter-spacing: .1em;
+      text-transform: uppercase; padding: 3px 10px;
+      border-radius: 20px; border: 1px solid;
+    }
+    .tag-order {
+      color: var(--muted);
+      background: var(--surface);
+      border-color: var(--border);
+    }
+    .tag-endemic {
+      color: #a8d8a8;
+      background: rgba(100,180,100,.1);
+      border-color: rgba(100,180,100,.3);
+    }
+    .tag-resident {
+      color: #c9b8ff;
+      background: rgba(150,120,255,.1);
+      border-color: rgba(150,120,255,.3);
+    }
+    .tag-migrant {
+      color: #ffcf80;
+      background: rgba(255,180,60,.1);
+      border-color: rgba(255,180,60,.3);
+    }
+
+    .bird-teaser {
+      font-size: .78rem; color: var(--muted); line-height: 1.6;
+      margin-top: 7px;
+      /* one line only */
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .bird-arrow {
+      font-size: 1rem; color: var(--cyan);
+      opacity: 0; transform: translateX(-6px);
+      transition: opacity .2s, transform .2s;
+      flex-shrink: 0;
+    }
+
+    /* SECTION DIVIDER */
+    .order-divider {
+      padding: 22px 24px 10px;
+      display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .order-divider-text {
+      font-size: .58rem; font-weight: 500; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--cyan); white-space: nowrap;
+    }
+    .order-divider-line { flex: 1; height: 1px; background: var(--border); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-brand {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem; letter-spacing: .14em;
+      color: var(--bg); background: var(--cyan);
+      padding: 3px 9px 1px; border-radius: 3px;
+    }
+    footer p {
+      font-size: .68rem; color: var(--muted); letter-spacing: .04em;
+    }
+
+    /* HIDDEN for filtering */
+    .bird-item.hidden { display: none; }
+
+    @media (max-width: 520px) {
+      .hero-title { font-size: 2.2rem; }
+      .bird-name-common { font-size: 1.1rem; }
+      .bird-teaser { display: none; }
     }
   </style>
 </head>
 <body>
-  <span class="logo">WILD-HUE</span>
+<div class="page-shell">
+
+  <!-- NAV -->
+  <nav>
+    <span class="nav-brand">WILD-HUE</span>
+    <span class="nav-count"><span>12</span> Species</span>
+  </nav>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-eyebrow">Field Collection · Sri Lanka</div>
+    <h1 class="hero-title">Birds of <em>Colour</em></h1>
+    <p class="hero-sub">A photographic field collection of Sri Lanka's most vibrant avifauna — from endemic jewels to seasonal migrants — documented in the wild.</p>
+  </header>
+
+  <!-- FILTER -->
+  <div class="filter-bar">
+    <span class="filter-label">Filter</span>
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="endemic">Endemic</button>
+    <button class="filter-btn" data-filter="resident">Resident</button>
+    <button class="filter-btn" data-filter="migrant">Migrant</button>
+    <button class="filter-btn" data-filter="coraciiformes">Coraciiformes</button>
+    <button class="filter-btn" data-filter="passeriformes">Passeriformes</button>
+  </div>
+
+  <!-- BIRD LIST -->
+  <div class="bird-list" id="birdList">
+
+    <!-- CORACIIFORMES -->
+    <div class="order-divider" data-order-label>
+      <span class="order-divider-text">Coraciiformes</span>
+      <div class="order-divider-line"></div>
+    </div>
+
+    <a class="bird-item" href="blue-tailed-bee-eater.html" data-tags="resident coraciiformes">
+      <div class="bird-item-inner">
+        <span class="bird-num">01</span>
+        <div class="bird-info">
+          <div class="bird-name-common">Blue-tailed Bee-eater</div>
+          <div class="bird-name-sci">Merops philippinus</div>
+          <div class="bird-meta">
+            <span class="bird-tag tag-order">Meropidae</span>
+            <span class="bird-tag tag-resident">Resident / Migrant</span>
+          </div>
+          <div class="bird-teaser">A slender, jewel-toned aerial hunter of open skies — sweeps and glides over paddy fields, rivers and forest clearings.</div>
+        </div>
+        <span class="bird-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="bird-item" href="indian-roller.html" data-tags="resident coraciiformes">
+      <div class="bird-item-inner">
+        <span class="bird-num">02</span>
+        <div class="bird-info">
+          <div class="bird-name-common">Indian Roller</div>
+          <div class="bird-name-sci">Coracias benghalensis</div>
+          <div class="bird-meta">
+            <span class="bird-tag tag-order">Coraciidae</span>
+            <span class="bird-tag tag-resident">Resident</span>
+          </div>
+          <div class="bird-teaser">Perched on a wire it appears unremarkable — until it rolls and tumbles through the air, flashing brilliant electric blue.</div>
+        </div>
+        <span class="bird-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="bird-item" href="oriental-dollarbird.html" data-tags="resident coraciiformes">
+      <div class="bird-item-inner">
+        <span class="bird-num">03</span>
+        <div class="bird-info">
+          <div class="bird-name-common">Oriental Dollarbird</div>
+          <div class="bird-name-sci">Eurystomus orientalis</div>
+          <div class="bird-meta">
+            <span class="bird-tag tag-order">Coraciidae</span>
+            <span class="bird-tag tag-resident">Resident</span>
+          </div>
+          <div class="bird-teaser">Named for the pale blue–white circular wing patches that flash like silver coins in flight.</div>
+        </div>
+        <span class="bird-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="bird-item" href="white-throated-kingfisher.html" data-tags="resident coraciiformes">
+      <div class="bird-item-inner">
+        <span class="bird-num">04</span>
+        <div class="bird-info">
+          <div class="bird-name-common">White-throated Kingfisher</div>
+          <div class="bird-name-sci">Halcyon smyrnensis</div>
+          <div class="bird-meta">
+            <span class="bird-tag tag-order">Alcedinidae</span>
+            <span class="bird-tag tag-resident">Resident</span>
+          </div>
+          <div class="bird-teaser">One of Sri Lanka's most familiar and boldly coloured birds — commands attention with its dazzling turquoise plumage.</div>
+        </div>
+        <span class="bird-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="bird-item" href="oriental-dwarf-kingfisher.html" data-tags="resident coraciiformes">
+      <div class="bird-item-inner">
+        <span class="bird-num">05</span>
+        <div class="bird-info">
+          <div class="bird-name-common">Oriental Dwarf Kingfisher</div>
+          <div class="bird-name-sci">Ceyx erithaca</div>
+          <div class="bird-meta">
+            <span class="bird-tag tag-order">Alcedinidae</span>
+            <span class="bird-tag tag-resident">Resident</span>
+          </div>
+          <div class="bird-teaser">A living jewel of the rainforest understory — among the world's most dazzling small birds.</div>
+        </div>
+        <span class="bird-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- TROGONIFORMES -->
+    <div class="order-divider" data-order-label>
+      <span class="order-divider-text">Trogoniformes</span>
+      <div class="order-divider-line"></div>
+    </div>
+
+    <a class="bird-item" href="malabar-trogon.html" data-tags="resident trogoniformes">
+      <div class="bird-item-inner">
+        <span class="bird-num">06</span>
+        <div class="bird-info">
+          <div class="bird-name-common">Malabar Trogon</div>
+          <div class="bird-name-sci">Harpactes fasciatus</div>
+          <div class="bird-meta">
+            <span class="bird-tag tag-order">Trogonidae</span>
+            <span class="bird-tag tag-resident">Resident</span>
+          </div>
+          <div class="bird-teaser">A resplendent gem of the rainforest canopy — one of Asia's most visually striking birds.</div>
+        </div>
+        <span class="bird-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- PASSERIFORMES -->
+    <div class="order-divider" data-order-label>
+      <span class="order-divider-text">Passeriformes</span>
+      <div class="order-divider-line"></div>
+    </div>
+
+    <a class="bird-item" href="small-minivet.html" data-tags="resident passeriformes">
+      <div class="bird-item-inner">
+        <span class="bird-num">07</span>
+        <div class="bird-info">
+          <div class="bird-name-common">Small Minivet</div>
+          <div class="bird-name-sci">Pericrocotus cinnamomeus</div>
+          <div class="bird-meta">
+            <span class="bird-tag tag-order">Campephagidae</span>
+            <span class="bird-tag tag-resident">Resident</span>
+          </div>
+          <div class="bird-teaser">Males flash brilliant orange-red against slate-grey; females a delicate yellow — restless canopy birds of open forest.</div>
+        </div>
+        <span class="bird-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="bird-item" href="indian-paradise-flycatcher.html" data-tags="migrant passeriformes">
+      <div class="bird-item-inner">
+        <span class="bird-num">08</span>
+        <div class="bird-info">
+          <div class="bird-name-common">Indian Paradise Flycatcher</div>
+          <div class="bird-name-sci">Terpsiphone paradisi</div>
+          <div class="bird-meta">
+            <span class="bird-tag tag-order">Monarchidae</span>
+            <span class="bird-tag tag-migrant">Migrant</span>
+          </div>
+          <div class="bird-teaser">The male trails extraordinary ribbon-like tail streamers, drifting through dappled forest shade like a ghost.</div>
+        </div>
+        <span class="bird-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="bird-item" href="indian-pitta.html" data-tags="migrant passeriformes">
+      <div class="bird-item-inner">
+        <span class="bird-num">09</span>
+        <div class="bird-info">
+          <div class="bird-name-common">Indian Pitta</div>
+          <div class="bird-name-sci">Pitta brachyura</div>
+          <div class="bird-meta">
+            <span class="bird-tag tag-order">Pittidae</span>
+            <span class="bird-tag tag-migrant">Migrant</span>
+          </div>
+          <div class="bird-teaser">A jewel of the forest floor — dazzles with nine vivid colours, earning the local name navaranga ("nine-coloured").</div>
+        </div>
+        <span class="bird-arrow">→</span>
+      </div>
+    </a>
+
+    <a class="bird-item" href="lotens-sunbird.html" data-tags="endemic passeriformes">
+      <div class="bird-item-inner">
+        <span class="bird-num">10</span>
+        <div class="bird-info">
+          <div class="bird-name-common">Loten's Sunbird</div>
+          <div class="bird-name-sci">Cinnyris lotenius</div>
+          <div class="bird-meta">
+            <span class="bird-tag tag-order">Nectariniidae</span>
+            <span class="bird-tag tag-endemic">Endemic</span>
+          </div>
+          <div class="bird-teaser">A jewel-bright resident of Sri Lanka's gardens and forest edges with an unusually long, decurved bill.</div>
+        </div>
+        <span class="bird-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- BUCEROTIFORMES -->
+    <div class="order-divider" data-order-label>
+      <span class="order-divider-text">Bucerotiformes</span>
+      <div class="order-divider-line"></div>
+    </div>
+
+    <a class="bird-item" href="malabar-pied-hornbill.html" data-tags="resident bucerotiformes">
+      <div class="bird-item-inner">
+        <span class="bird-num">11</span>
+        <div class="bird-info">
+          <div class="bird-name-common">Malabar Pied Hornbill</div>
+          <div class="bird-name-sci">Anthracoceros coronatus</div>
+          <div class="bird-meta">
+            <span class="bird-tag tag-order">Bucerotidae</span>
+            <span class="bird-tag tag-resident">Resident</span>
+          </div>
+          <div class="bird-teaser">Bold black-and-white plumage, a massive casqued bill — heard long before it is seen, crashing through the forest canopy.</div>
+        </div>
+        <span class="bird-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- PSITTACIFORMES -->
+    <div class="order-divider" data-order-label>
+      <span class="order-divider-text">Psittaciformes</span>
+      <div class="order-divider-line"></div>
+    </div>
+
+    <a class="bird-item" href="sri-lanka-hanging-parrot.html" data-tags="endemic psittaciformes">
+      <div class="bird-item-inner">
+        <span class="bird-num">12</span>
+        <div class="bird-info">
+          <div class="bird-name-common">Sri Lanka Hanging Parrot</div>
+          <div class="bird-name-sci">Loriculus beryllinus</div>
+          <div class="bird-meta">
+            <span class="bird-tag tag-order">Psittaculidae</span>
+            <span class="bird-tag tag-endemic">Endemic</span>
+          </div>
+          <div class="bird-teaser">A tiny, acrobatic jewel found only in Sri Lanka — earns its name from the extraordinary habit of roosting upside-down.</div>
+        </div>
+        <span class="bird-arrow">→</span>
+      </div>
+    </a>
+
+  </div><!-- /bird-list -->
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-brand">WILD-HUE</span>
+    <p>© 2025 Wild-Hue · All photographs protected · Reproduction prohibited</p>
+  </footer>
+
+</div><!-- /page-shell -->
+
+<script>
+  // Filter functionality
+  const btns  = document.querySelectorAll('.filter-btn');
+  const items = document.querySelectorAll('.bird-item');
+  const dividers = document.querySelectorAll('[data-order-label]');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+
+      items.forEach(item => {
+        const tags = item.dataset.tags || '';
+        if (filter === 'all' || tags.includes(filter)) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+
+      // Hide order dividers if all items under them are hidden
+      dividers.forEach(div => {
+        let next = div.nextElementSibling;
+        let hasVisible = false;
+        while (next && !next.hasAttribute('data-order-label')) {
+          if (next.classList.contains('bird-item') && !next.classList.contains('hidden')) {
+            hasVisible = true;
+          }
+          next = next.nextElementSibling;
+        }
+        div.style.display = hasVisible ? '' : 'none';
+      });
+    });
+  });
+</script>
 </body>
 </html>
